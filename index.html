@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마라톤 & 트레일러닝 접수 일정</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f1ea;
+            --text-main: #3d312a;
+            --text-light: #6e6056;
+            --accent-color: #8c3f35;
+            --card-bg: #fcfbf9;
+            --border-color: #d1c8bd;
+            --month-bg: #e6dfd3;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Noto Serif KR", serif;
+            background-image: radial-gradient(#d1c8bd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            border-bottom: 2px solid var(--border-color);
+            background: linear-gradient(to bottom, rgba(244,241,234,1) 0%, rgba(244,241,234,0.8) 100%);
+        }
+
+        h1 {
+            font-family: "Playfair Display", "Noto Serif KR", serif;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin: 0 0 10px 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .blog-link {
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        .blog-link a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid var(--accent-color);
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .blog-link a:hover {
+            color: var(--text-main);
+            border-bottom-color: var(--text-main);
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .month-section {
+            margin-bottom: 60px;
+        }
+
+        .month-header {
+            font-family: "Playfair Display", "Noto Serif KR", serif;
+            font-size: 2rem;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+        
+        .month-header span {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-right: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 160px;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--accent-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: var(--accent-color);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .event-date {
+            font-family: "Playfair Display", serif;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .event-date::before {
+            content: "🗓";
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+
+        .event-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+            color: var(--text-main);
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: var(--accent-color);
+            text-decoration: none;
+            border: 1px solid var(--accent-color);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>RUN RUUN</h1>
+        <p class="subtitle">월별 마라톤 / 트레일러닝 접수중 대회 목록</p>
+        <p class="blog-link"><a href="https://runruun.tistory.com/" target="_blank">RUNRUUN 티스토리 가기 ➔</a></p>
+    </header>
+
+    <div class="container">
+        <div class="month-section">
+            <h2 class="month-header"><span>5</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">5/30</div>
+                        <h2 class="event-name">6.10만세운동 메모리얼로드(무료)</h2>
+                    </div>
+                    <a href="http://s2s2.co.kr/sites/610manse" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">5/30</div>
+                        <h2 class="event-name">2026 부천의장배 20km릴레이마라톤</h2>
+                    </div>
+                    <a href="http://cafe.naver.com/bskrun?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D31146576%2526articleid%3D15%2526menuid%3D1%2526boardtype%3DL" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">5/30</div>
+                        <h2 class="event-name">제1회 광주대학교 수직마라톤</h2>
+                    </div>
+                    <a href="http://forms.gle/g4tCvGWSMtg7CSZF8" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">5/30</div>
+                        <h2 class="event-name">제주 김녕 빵빵런 2026</h2>
+                    </div>
+                    <a href="http://jejubbangrun.com/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="month-section">
+            <h2 class="month-header"><span>6</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/6</div>
+                        <h2 class="event-name">2026 백산수 심심런</h2>
+                    </div>
+                    <a href="http://simsimrun.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/6</div>
+                        <h2 class="event-name">2026 도시가스 트레일 온 런 강원</h2>
+                    </div>
+                    <a href="http://citygasonrun.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/6</div>
+                        <h2 class="event-name">2026 춘천봄내마라톤</h2>
+                    </div>
+                    <a href="http://ccpmarathon.kr/math/index.php" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/6</div>
+                        <h2 class="event-name">2026 푸른하늘런</h2>
+                    </div>
+                    <a href="http://blueskyrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/6</div>
+                        <h2 class="event-name">제9회남한산성TRAILRUNNING</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20250911090719&csno=20220731195207#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/7</div>
+                        <h2 class="event-name">2026 iM뱅크 코리아 오픈 마라톤</h2>
+                    </div>
+                    <a href="http://www.imrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/13</div>
+                        <h2 class="event-name">제1회 모두런</h2>
+                    </div>
+                    <a href="http://www.sfinder.co.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/13</div>
+                        <h2 class="event-name">DC SUPER HERO RUN</h2>
+                    </div>
+                    <a href="http://kko.to/ZKJ0jsV6GV" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/13</div>
+                        <h2 class="event-name">2026 지중해마을 마라톤</h2>
+                    </div>
+                    <a href="http://bluecrystalmarathon.imweb.me" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/13</div>
+                        <h2 class="event-name">부산 송도해안트레일런</h2>
+                    </div>
+                    <a href="http://www.mtrailrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/14</div>
+                        <h2 class="event-name">제21회 광진구연맹회장배 육상대회</h2>
+                    </div>
+                    <a href="http://ksgaaf.co.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/14</div>
+                        <h2 class="event-name">제22회 인천광역시장기 건강달리기</h2>
+                    </div>
+                    <a href="http://healthyrun.co.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/20</div>
+                        <h2 class="event-name">제2회 희망 서울 마라톤</h2>
+                    </div>
+                    <a href="http://hoperun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/20</div>
+                        <h2 class="event-name">제16회 국민행복마라톤</h2>
+                    </div>
+                    <a href="http://www.irunman.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/20</div>
+                        <h2 class="event-name">2026 웰메이드런</h2>
+                    </div>
+                    <a href="http://wellmaderun.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/21</div>
+                        <h2 class="event-name">월리를 찾아라런 in 서울 2026</h2>
+                    </div>
+                    <a href="http://wallyrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/21</div>
+                        <h2 class="event-name">2026 보은 속리산 말티재 힐링 알몸 마라톤</h2>
+                    </div>
+                    <a href="http://mara1080.com/event/cfa1bea4-b545-4df9-8ae1-5ce280ca0e3d" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/21</div>
+                        <h2 class="event-name">2026 참행복나눔 마라톤</h2>
+                    </div>
+                    <a href="http://realhappyrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/21</div>
+                        <h2 class="event-name">2026 람사르습지 밤섬런</h2>
+                    </div>
+                    <a href="http://bamseomrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/21</div>
+                        <h2 class="event-name">소백산 죽령TrailRunnig</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eindex&opp=20250626115011&csno=20201120111538#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/27</div>
+                        <h2 class="event-name">2026 순천 치유 미식 트레일런</h2>
+                    </div>
+                    <a href="http://projectruntrip.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/27</div>
+                        <h2 class="event-name">2026 전마협 10km 연대별 최강전</h2>
+                    </div>
+                    <a href="http://mara1080.com/event/5baeed50-d91c-4453-bf68-48ab19911d58" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/27</div>
+                        <h2 class="event-name">2026 큰별 하프 마라톤</h2>
+                    </div>
+                    <a href="http://bigstarrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/28</div>
+                        <h2 class="event-name">2026 울산남구청장배 육상대회</h2>
+                    </div>
+                    <a href="http://modern-infinity-9e6.notion.site/2026-359918810cc280958531fd2261f990d6" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/28</div>
+                        <h2 class="event-name">THE PACER SERIES</h2>
+                    </div>
+                    <a href="http://thepacerseries.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/28</div>
+                        <h2 class="event-name">제20회 강북구청장배 마라톤</h2>
+                    </div>
+                    <a href="http://cafe.daum.net/Kangmaclub/IZkA" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/28</div>
+                        <h2 class="event-name">제1회 리프레시런</h2>
+                    </div>
+                    <a href="http://refreshrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/28</div>
+                        <h2 class="event-name">2026 서울런</h2>
+                    </div>
+                    <a href="http://seoulrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/28</div>
+                        <h2 class="event-name">2026 전국블루베리마라톤축제</h2>
+                    </div>
+                    <a href="http://dhrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="month-section">
+            <h2 class="month-header"><span>7</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/4</div>
+                        <h2 class="event-name">IRON RUN 2026</h2>
+                    </div>
+                    <a href="http://www.ironrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/5</div>
+                        <h2 class="event-name">제10회 노원구청장배 겸 회장배마라톤</h2>
+                    </div>
+                    <a href="http://www.nowonmarathon.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/5</div>
+                        <h2 class="event-name">제8회안산인왕산북악산TRAILRUN</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20250821124548&csno=20220326200847#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/12</div>
+                        <h2 class="event-name">2026 울릉도 국제 트레일러닝</h2>
+                    </div>
+                    <a href="http://osk.run/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/18</div>
+                        <h2 class="event-name">2026 쿨밸리트레일레이스</h2>
+                    </div>
+                    <a href="http://rocknrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/19</div>
+                        <h2 class="event-name">제16회 태종대혹서기전국마라톤</h2>
+                    </div>
+                    <a href="http://www.bsama.co.kr/index.asp" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/19</div>
+                        <h2 class="event-name">2026 쿨밸리트레일레이스</h2>
+                    </div>
+                    <a href="http://rocknrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">7/19</div>
+                        <h2 class="event-name">2026 청계산.인릉산TrailRunn</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20250821130406&csno=20190812093657#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="month-section">
+            <h2 class="month-header"><span>8</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/1</div>
+                        <h2 class="event-name">2026 인사이더런 S</h2>
+                    </div>
+                    <a href="http://insiderun.me" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/15</div>
+                        <h2 class="event-name">2026 장수 나이트 트레일</h2>
+                    </div>
+                    <a href="http://rocknrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/15</div>
+                        <h2 class="event-name">영남알프스9봉 트레일 레이스</h2>
+                    </div>
+                    <a href="http://jyd.creatorlink.net" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/15</div>
+                        <h2 class="event-name">제38회 지리산화대종주 UTMB</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20250820150217&csno=20191209143330#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/23</div>
+                        <h2 class="event-name">2026대구세계마스터즈 10km대회</h2>
+                    </div>
+                    <a href="http://www.wmac2026.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/23</div>
+                        <h2 class="event-name">2026 금수산트레일러닝대회</h2>
+                    </div>
+                    <a href="http://www.runnerking.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/30</div>
+                        <h2 class="event-name">제3회 한강 서울 하프 마라톤</h2>
+                    </div>
+                    <a href="http://seoulhalfrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">8/30</div>
+                        <h2 class="event-name">2026대구세계마스터즈 하프마라톤대회</h2>
+                    </div>
+                    <a href="http://www.wmac2026.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="month-section">
+            <h2 class="month-header"><span>9</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/5</div>
+                        <h2 class="event-name">제20회 순천만울트라마라톤대회</h2>
+                    </div>
+                    <a href="http://www.scultra100.net" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/6</div>
+                        <h2 class="event-name">제11회 김대중 평화 마라톤 대회</h2>
+                    </div>
+                    <a href="http://kdjrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/6</div>
+                        <h2 class="event-name">2026 샌드런 IN 영덕</h2>
+                    </div>
+                    <a href="http://sandrun.co.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/6</div>
+                        <h2 class="event-name">2026 봉화송이 전국마라톤</h2>
+                    </div>
+                    <a href="http://bonghwarun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/6</div>
+                        <h2 class="event-name">제24회 청광종주TRAILRUNNING</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20250626120820&csno=20191016122754#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/6</div>
+                        <h2 class="event-name">희망드림 제23회 새벽강변 국제마라톤</h2>
+                    </div>
+                    <a href="http://amarunsb.com/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/12</div>
+                        <h2 class="event-name">제2회 화이트런 생리대 기부마라톤</h2>
+                    </div>
+                    <a href="http://whiterun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/12</div>
+                        <h2 class="event-name">제2회 초록우산 런웨이 마라톤</h2>
+                    </div>
+                    <a href="http://mara1080.com/event/9443583f-6577-466c-ab2f-43d1dbd820d4" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/12</div>
+                        <h2 class="event-name">2026 양양 강변 전국 마라톤</h2>
+                    </div>
+                    <a href="http://yrun.co.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/12</div>
+                        <h2 class="event-name">빵트레일런 2026</h2>
+                    </div>
+                    <a href="http://bbangtrailrun.co.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/13</div>
+                        <h2 class="event-name">제14회설악산공룡능선UTMB</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20250910133652&csno=20191227110239#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/13</div>
+                        <h2 class="event-name">2026 울진금강송힐링마라톤</h2>
+                    </div>
+                    <a href="http://www.ujrun.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/19</div>
+                        <h2 class="event-name">2026 금산인삼축제 마라톤</h2>
+                    </div>
+                    <a href="http://mara1080.com/event/2044eb82-fcdb-4e56-b79b-f3543a6a360d" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/20</div>
+                        <h2 class="event-name">2026 공주마라톤</h2>
+                    </div>
+                    <a href="http://www.gongjumarathon.com/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">9/20</div>
+                        <h2 class="event-name">제19회 가평자라섬 전국마라톤</h2>
+                    </div>
+                    <a href="http://gprun.com/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="month-section">
+            <h2 class="month-header"><span>10</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/3</div>
+                        <h2 class="event-name">제25회 김제새만금 지평선 전국마라톤</h2>
+                    </div>
+                    <a href="http://gimjesm.co.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/3</div>
+                        <h2 class="event-name">제 2회 아산이순신 트레일</h2>
+                    </div>
+                    <a href="http://isunshintrail.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/3</div>
+                        <h2 class="event-name">2026 서산 코스모스 황금들녘 마라톤 대회</h2>
+                    </div>
+                    <a href="http://mara1080.com/event/fcaa0bc8-1489-47c3-8fec-8e5a5c17284e" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/4</div>
+                        <h2 class="event-name">2026 파주북시티마라톤</h2>
+                    </div>
+                    <a href="http://runbookcity.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/4</div>
+                        <h2 class="event-name">2026 안동마라톤</h2>
+                    </div>
+                    <a href="http://www.admarathon.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/4</div>
+                        <h2 class="event-name">제20회 달서하프마라톤</h2>
+                    </div>
+                    <a href="http://www.달서하프마라톤.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/4</div>
+                        <h2 class="event-name">2026 홍천사랑마라톤</h2>
+                    </div>
+                    <a href="http://www.hongcheonrun.net/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/10</div>
+                        <h2 class="event-name">제9회 거제시장배 섬꽃 전국 마라톤</h2>
+                    </div>
+                    <a href="http://mara1080.com/event/b43655f0-60be-4c97-ad62-d377f6586ae0" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/10</div>
+                        <h2 class="event-name">제5회 무등산지오마라톤</h2>
+                    </div>
+                    <a href="http://georun.kr/ko/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/10</div>
+                        <h2 class="event-name">2026 경포마라톤</h2>
+                    </div>
+                    <a href="http://www.경포마라톤.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/10</div>
+                        <h2 class="event-name">제7회 천안삼거리 흥타령울트라마라톤</h2>
+                    </div>
+                    <a href="http://www.chultra.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/11</div>
+                        <h2 class="event-name">2026 서울레이스</h2>
+                    </div>
+                    <a href="http://www.seoul-race.co.kr" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/11</div>
+                        <h2 class="event-name">2026 MBN 전국 나주 마라톤대회</h2>
+                    </div>
+                    <a href="http://najumarathon.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/11</div>
+                        <h2 class="event-name">제10회 가을철 산불조심마라톤</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eindex&csno=20190605121808&opp=20260203121910#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/17</div>
+                        <h2 class="event-name">제24회 청원생명쌀대청호마라톤</h2>
+                    </div>
+                    <a href="http://race.cjsports.or.kr/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">10/25</div>
+                        <h2 class="event-name">2026 청송사과트레일런</h2>
+                    </div>
+                    <a href="http://csmarathon.co.kr/csmarathon/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="month-section">
+            <h2 class="month-header"><span>11</span>월 대회</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <div class="event-date">11/14</div>
+                        <h2 class="event-name">2026 포항마라톤챔피언십</h2>
+                    </div>
+                    <a href="http://pohangmarathon.com/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">11/15</div>
+                        <h2 class="event-name">제24회 상주 곶감 마라톤 대회</h2>
+                    </div>
+                    <a href="http://www.mara1080.com/event/c8dc2c22-a83a-4743-9e34-c884e9809dbb" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">11/15</div>
+                        <h2 class="event-name">제3회 무등산더블하트국제트레일런대회</h2>
+                    </div>
+                    <a href="http://www.cuk-sports.com/" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">11/15</div>
+                        <h2 class="event-name">제24회 대모산,구룡산 트레일런</h2>
+                    </div>
+                    <a href="http://www.koreatrail.net/home/main.php?link=event&einc=eapp&opp=20241014202801&csno=20200702232740#baseline" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

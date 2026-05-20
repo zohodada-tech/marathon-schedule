@@ -1,0 +1,6 @@
+# 1. 바탕화면의 모든 파일 및 폴더를 기본적으로 무시 (Private로 은폐)
+*
+
+# 2. 단, 대시보드 웹페이지(index.html)와 설정 파일(.gitignore)만 예외적으로 깃허브 업로드 허용 (Public 공개)
+!index.html
+!.gitignore
