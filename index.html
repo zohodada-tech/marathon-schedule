@@ -195,7 +195,172 @@
                 font-size: 2rem;
             }
         }
+
+        /* 필터 컨테이너 스타일 */
+        .filter-wrapper {
+            margin: 20px auto 10px;
+            max-width: 1200px;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tag-btn {
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: "Noto Serif KR", serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .tag-btn.active {
+            background-color: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(140, 63, 53, 0.25);
+        }
+
+        /* 트레일러닝 전용 버튼 스타일 */
+        .tag-btn-trail {
+            border-color: #4a6b53;
+            color: #4a6b53;
+        }
+        
+        .tag-btn-trail:hover {
+            border-color: #2e4533;
+            color: #2e4533;
+        }
+        
+        .tag-btn-trail.active {
+            background-color: #4a6b53;
+            border-color: #4a6b53;
+            box-shadow: 0 4px 12px rgba(74, 107, 83, 0.25);
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterTagsContainer = document.getElementById('filterTags');
+            if (!filterTagsContainer) return;
+
+            // 1. 현재 월 구하기
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1; // 1 ~ 12
+
+            // 2. 필터 버튼 생성 데이터 설정
+            // 전체 버튼
+            const allBtn = document.createElement('button');
+            allBtn.className = 'tag-btn active';
+            allBtn.id = 'tag-all';
+            allBtn.innerHTML = '✨ 전체';
+            allBtn.addEventListener('click', () => filterEvents('all', allBtn));
+            filterTagsContainer.appendChild(allBtn);
+
+            // 트레일러닝 버튼
+            const trailBtn = document.createElement('button');
+            trailBtn.className = 'tag-btn tag-btn-trail';
+            trailBtn.id = 'tag-trail';
+            trailBtn.innerHTML = '🌲 트레일러닝';
+            trailBtn.addEventListener('click', () => filterEvents('trail', trailBtn));
+            filterTagsContainer.appendChild(trailBtn);
+
+            // 오늘 날짜 기준으로 해당 월부터 12월까지 버튼 생성
+            for (let m = currentMonth; m <= 12; m++) {
+                const monthBtn = document.createElement('button');
+                monthBtn.className = 'tag-btn';
+                monthBtn.dataset.month = m;
+                monthBtn.innerHTML = `📅 ${m}월`;
+                monthBtn.addEventListener('click', () => filterEvents(m.toString(), monthBtn));
+                filterTagsContainer.appendChild(monthBtn);
+            }
+
+            // 3. 필터링 함수
+            function filterEvents(type, activeBtn) {
+                // 활성화 클래스 토글
+                document.querySelectorAll('.tag-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                activeBtn.classList.add('active');
+
+                const sections = document.querySelectorAll('.month-section');
+
+                if (type === 'all') {
+                    // 전체 보기
+                    sections.forEach(section => {
+                        section.style.display = 'block';
+                        const cards = section.querySelectorAll('.card');
+                        cards.forEach(card => card.style.display = 'flex');
+                    });
+                } else if (type === 'trail') {
+                    // 트레일러닝 필터링: "트레일", "트레일러닝", "trail", "trail run" 매칭
+                    const keywords = ['트레일', '트레일러닝', 'trail', 'trail run'];
+                    
+                    sections.forEach(section => {
+                        let visibleCardsCount = 0;
+                        const cards = section.querySelectorAll('.card');
+                        
+                        cards.forEach(card => {
+                            const nameText = card.querySelector('.event-name').textContent.toLowerCase();
+                            const matches = keywords.some(keyword => nameText.includes(keyword));
+                            
+                            if (matches) {
+                                card.style.display = 'flex';
+                                visibleCardsCount++;
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+
+                        // 카드가 하나도 없는 월 섹션은 숨김
+                        if (visibleCardsCount > 0) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                } else {
+                    // 특정 월 필터링
+                    sections.forEach(section => {
+                        const monthHeaderSpan = section.querySelector('.month-header span');
+                        if (monthHeaderSpan) {
+                            const sectionMonth = monthHeaderSpan.textContent.trim();
+                            if (sectionMonth === type) {
+                                section.style.display = 'block';
+                                // 해당 월의 모든 카드 보이기
+                                const cards = section.querySelectorAll('.card');
+                                cards.forEach(card => card.style.display = 'flex');
+                            } else {
+                                section.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -205,6 +370,10 @@
         <p class="blog-link"><a href="https://runruun.tistory.com/" target="_blank">RUNRUUN 티스토리 가기 ➔</a></p>
     </header>
 
+    <div class="filter-wrapper">
+        <div class="filter-tags" id="filterTags"></div>
+    </div>
+
     <div class="container">
         <div class="month-section">
             <h2 class="month-header"><span>5</span>월 대회</h2>
@@ -212,7 +381,7 @@
                 <div class="card">
                     <div>
                         <div class="event-date">5/30</div>
-                        <h2 class="event-name">6.10만세운동 메모리얼로드(무료)</h2>
+                        <h2 class="event-name">6.10만세운동 무료 걷기대회(상품권 증정)</h2>
                     </div>
                     <a href="http://s2s2.co.kr/sites/610manse" target="_blank" class="btn">홈페이지 가기</a>
                 </div>
@@ -222,13 +391,6 @@
                         <h2 class="event-name">2026 부천의장배 20km릴레이마라톤</h2>
                     </div>
                     <a href="http://cafe.naver.com/bskrun?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D31146576%2526articleid%3D15%2526menuid%3D1%2526boardtype%3DL" target="_blank" class="btn">홈페이지 가기</a>
-                </div>
-                <div class="card">
-                    <div>
-                        <div class="event-date">5/30</div>
-                        <h2 class="event-name">제1회 광주대학교 수직마라톤</h2>
-                    </div>
-                    <a href="http://forms.gle/g4tCvGWSMtg7CSZF8" target="_blank" class="btn">홈페이지 가기</a>
                 </div>
                 <div class="card">
                     <div>
@@ -287,30 +449,9 @@
                 <div class="card">
                     <div>
                         <div class="event-date">6/13</div>
-                        <h2 class="event-name">제1회 모두런</h2>
-                    </div>
-                    <a href="http://www.sfinder.co.kr" target="_blank" class="btn">홈페이지 가기</a>
-                </div>
-                <div class="card">
-                    <div>
-                        <div class="event-date">6/13</div>
-                        <h2 class="event-name">DC SUPER HERO RUN</h2>
-                    </div>
-                    <a href="http://kko.to/ZKJ0jsV6GV" target="_blank" class="btn">홈페이지 가기</a>
-                </div>
-                <div class="card">
-                    <div>
-                        <div class="event-date">6/13</div>
                         <h2 class="event-name">2026 지중해마을 마라톤</h2>
                     </div>
                     <a href="http://bluecrystalmarathon.imweb.me" target="_blank" class="btn">홈페이지 가기</a>
-                </div>
-                <div class="card">
-                    <div>
-                        <div class="event-date">6/13</div>
-                        <h2 class="event-name">부산 송도해안트레일런</h2>
-                    </div>
-                    <a href="http://www.mtrailrun.kr" target="_blank" class="btn">홈페이지 가기</a>
                 </div>
                 <div class="card">
                     <div>
@@ -346,6 +487,13 @@
                         <h2 class="event-name">2026 웰메이드런</h2>
                     </div>
                     <a href="http://wellmaderun.com" target="_blank" class="btn">홈페이지 가기</a>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="event-date">6/20</div>
+                        <h2 class="event-name">경주 남산트레일런</h2>
+                    </div>
+                    <a href="http://www.mtrailrun.kr" target="_blank" class="btn">홈페이지 가기</a>
                 </div>
                 <div class="card">
                     <div>
@@ -402,13 +550,6 @@
                         <h2 class="event-name">2026 큰별 하프 마라톤</h2>
                     </div>
                     <a href="http://bigstarrun.kr/" target="_blank" class="btn">홈페이지 가기</a>
-                </div>
-                <div class="card">
-                    <div>
-                        <div class="event-date">6/28</div>
-                        <h2 class="event-name">2026 울산남구청장배 육상대회</h2>
-                    </div>
-                    <a href="http://modern-infinity-9e6.notion.site/2026-359918810cc280958531fd2261f990d6" target="_blank" class="btn">홈페이지 가기</a>
                 </div>
                 <div class="card">
                     <div>
